@@ -5,21 +5,28 @@
 package controller;
 
 import com.sun.javafx.stage.PopupWindowHelper;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import modelo.casilla;
+import modelo.tablero;
 
 /**
  * FXML Controller class
@@ -34,9 +41,10 @@ public class JuegoController implements Initializable {
     int numMinas=8;
     
     Button[][] botonesTablero;
-    private AnchorPane tableroPaNE;
     @FXML
     private AnchorPane tableroPane;
+    
+    tablero tableroBuscaminas;
     
 
     /**
@@ -45,7 +53,21 @@ public class JuegoController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cargarControles();
+        crearTableroBuscaminas();
     }    
+    
+    private void crearTableroBuscaminas(){
+        tableroBuscaminas = new tablero(numFilas, numColumnas, numMinas);
+        tableroBuscaminas.setEventoPartidaPerdida(new Consumer<List<casilla>>(){
+            @Override
+            public void accept (List<casilla> t) {
+                for (casilla casillaConMinas:t){
+                    botonesTablero[casillaConMinas.getPosFila()][casillaConMinas.getPosColumna()].setText("*");
+                }
+            }
+        });    
+        tableroBuscaminas.imprimirTablero();
+    }
 
     void closeWindows() {
        try {
@@ -97,14 +119,30 @@ public class JuegoController implements Initializable {
                     botonesTablero[i][j].setPrefWidth(anchoControl);
                     botonesTablero[i][j].setPrefHeight(altoControl);
                 }
+                botonesTablero[i][j].setOnMouseClicked(e -> {
+                    btnClick(e);
+                });
+
             tableroPane.getChildren().add(botonesTablero[i][j]);
                 
             }
             
         }
     }
+    private void btnClick(javafx.scene.input.MouseEvent e) {
+        Button btn = (Button) e.getSource();
+        String[] coordenada = btn.getId().split(",");
+        int posFila = Integer.parseInt(coordenada[0]);
+        int posColumna = Integer.parseInt(coordenada[1]);
+        btn.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Información");
+            alert.setContentText(posFila + "," + posColumna);
+            alert.showAndWait();
+            tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
+        });
 
+    }
     
-}
-    
+} 
 
