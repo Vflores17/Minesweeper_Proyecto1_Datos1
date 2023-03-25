@@ -38,7 +38,7 @@ public class JuegoController implements Initializable {
     private Button btnSalirJuego;
     int numFilas=8;
     int numColumnas=8;
-    int numMinas=8;
+    int numMinas=15;
     
     Button[][] botonesTablero;
     @FXML
@@ -66,6 +66,23 @@ public class JuegoController implements Initializable {
                 }
             }
         });    
+        tableroBuscaminas.setEventoPartidaGanada(new Consumer<List<casilla>>(){
+            @Override
+            public void accept (List<casilla> t) {
+                for (casilla casillaConMinas:t){
+                    botonesTablero[casillaConMinas.getPosFila()][casillaConMinas.getPosColumna()].setText(":)");
+                }
+            }
+        });    
+        tableroBuscaminas.setEventoCasillaAbierta(new Consumer<casilla>(){
+            @Override
+            public void accept(casilla t) {
+                botonesTablero[t.getPosFila()][t.getPosColumna()].setDisable(true);
+                botonesTablero[t.getPosFila()][t.getPosColumna()].setText(t.getNumMinasAlrededor()==0?"":
+                        t.getNumMinasAlrededor()+ "");
+                
+            }
+        });
         tableroBuscaminas.imprimirTablero();
     }
 
@@ -135,10 +152,7 @@ public class JuegoController implements Initializable {
         int posFila = Integer.parseInt(coordenada[0]);
         int posColumna = Integer.parseInt(coordenada[1]);
         btn.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Información");
-            alert.setContentText(posFila + "," + posColumna);
-            alert.showAndWait();
+            
             tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
         });
 
