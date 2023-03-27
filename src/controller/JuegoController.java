@@ -4,10 +4,8 @@
  */
 package controller;
 
-import estructurasDatos.listaSimple;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -23,8 +21,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import modelo.casilla;
 import modelo.tablero;
-import modelo.cronometroJuego;
 import estructurasDatos.listaSimple;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Duration;
+import modelo.cronometroJuego;
 
 
 /**
@@ -33,6 +40,8 @@ import estructurasDatos.listaSimple;
  * @author Personal
  */
 public class JuegoController implements Initializable {
+    
+    boolean turnoCompu=false;
 
     private Button btnSalirJuego;
     int numFilas=8;
@@ -46,8 +55,15 @@ public class JuegoController implements Initializable {
     tablero tableroBuscaminas;
     @FXML
     private Label labelTiempo;
+    private int MinasEncontradas;
+
+    int bombasEncontradas = 0;
+
+    cronometroJuego crono = new cronometroJuego(this);
     @FXML
     private Label labelMinasEncontradas;
+    @FXML
+    private Label labelMostrarMinas;
     
 
     /**
@@ -57,8 +73,11 @@ public class JuegoController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         cargarControles();
         crearTableroBuscaminas();
+        crono.iniciarCronometro();
+
         
-    }    
+    }
+    
     
     private void crearTableroBuscaminas(){
         tableroBuscaminas = new tablero(numFilas, numColumnas, numMinas);
@@ -68,6 +87,14 @@ public class JuegoController implements Initializable {
                 for (casilla casillaConMinas:t.getCasillas()){
                     botonesTablero[casillaConMinas.getPosFila()][casillaConMinas.getPosColumna()].setText("*");
                 }
+                tableroPane.setDisable(true);
+                crono.detenerCronometro();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Perdiste");
+                alert.setContentText("Acabas de perder la partida.");
+                alert.showAndWait();
+                
+                
             }
         });    
         tableroBuscaminas.setEventoPartidaGanada(new Consumer<listaSimple>(){
@@ -76,6 +103,12 @@ public class JuegoController implements Initializable {
                 for (casilla casillaConMinas:t.getCasillas()){
                     botonesTablero[casillaConMinas.getPosFila()][casillaConMinas.getPosColumna()].setText(":)");
                 }
+                tableroPane.setDisable(true);
+                crono.detenerCronometro();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Ganaste");
+                alert.setContentText("¡Felicidades! Ganaste la partida.");
+                alert.showAndWait();
             }
         });    
         tableroBuscaminas.setEventoCasillaAbierta(new Consumer<casilla>(){
@@ -120,23 +153,25 @@ public class JuegoController implements Initializable {
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
                 botonesTablero[i][j]=new Button();
-                botonesTablero[i][j].setId(i+","+j);
+                botonesTablero[i][j].setId(i + "," + j);
                 botonesTablero[i][j].setBorder(null);
-                if (i==0 && j==0){
+                MouseEvent dobleClic = new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, true, true, true, true, true, true, true, true, true, true, null);
+                botonesTablero[i][j].fireEvent(dobleClic);
+                if (i == 0 && j == 0) {
                     botonesTablero[i][j].setLayoutX(posXreferencia);
                     botonesTablero[i][j].setLayoutY(posYreferencia);
                     botonesTablero[i][j].setPrefWidth(anchoControl);
                     botonesTablero[i][j].setPrefHeight(altoControl);
-                }else if (i==0 && j!=0){
-                    botonesTablero[i][j].setLayoutX(botonesTablero[i][j-1].getLayoutX()
-                            +botonesTablero[i][j-1].getPrefWidth());
+                } else if (i == 0 && j != 0) {
+                    botonesTablero[i][j].setLayoutX(botonesTablero[i][j - 1].getLayoutX()
+                            + botonesTablero[i][j - 1].getPrefWidth());
                     botonesTablero[i][j].setLayoutY(posYreferencia);
                     botonesTablero[i][j].setPrefWidth(anchoControl);
                     botonesTablero[i][j].setPrefHeight(altoControl);
-                }else{
-                    botonesTablero[i][j].setLayoutX(botonesTablero[i-1][j].getLayoutX());
-                    botonesTablero[i][j].setLayoutY(botonesTablero[i-1][j].getLayoutY()
-                            +botonesTablero[i-1][j].getPrefHeight());
+                } else {
+                    botonesTablero[i][j].setLayoutX(botonesTablero[i - 1][j].getLayoutX());
+                    botonesTablero[i][j].setLayoutY(botonesTablero[i - 1][j].getLayoutY()
+                            + botonesTablero[i - 1][j].getPrefHeight());
                     botonesTablero[i][j].setPrefWidth(anchoControl);
                     botonesTablero[i][j].setPrefHeight(altoControl);
                 }
@@ -151,19 +186,64 @@ public class JuegoController implements Initializable {
         }
     }
     private void btnClick(javafx.scene.input.MouseEvent e) {
+
         Button btn = (Button) e.getSource();
         String[] coordenada = btn.getId().split(",");
         int posFila = Integer.parseInt(coordenada[0]);
         int posColumna = Integer.parseInt(coordenada[1]);
-        btn.setOnAction(event -> {
-            
-            tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
-        });
 
+        if (e.getButton() == MouseButton.SECONDARY) {
+            btn.setText(":0");
+            MinasEncontradas++;
+            labelMostrarMinas.setText(MinasEncontradas + "");
+            return; // Salir del método
+        }
+
+        if (turnoCompu) {
+            tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
+        } else {
+            try {
+                dummyLevel(turnoCompu = true);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (AWTException ex) {
+                Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            turnoCompu = false;
+        }
+
+        turnoCompu = !turnoCompu; // Cambiar el turno
     }
-    public void setLabel(String labelString){
+
+    public void setLabel(String labelString) {
         labelTiempo.setText(labelString);
     }
-    
-} 
 
+    public void dummyLevel(boolean turnoCompu) throws InterruptedException, AWTException {
+        if (turnoCompu) {
+            int fila,columna;
+            do {
+                fila = (int) (Math.random() * numFilas);
+                columna = (int) (Math.random() * numColumnas);
+            } while (botonesTablero[fila][columna].isDisabled());
+            
+            if (!botonesTablero[fila][columna].isDisabled()) {
+                //botonesTablero[fila][columna].fire();
+                MouseEvent event1 = new MouseEvent(MouseEvent.MOUSE_CLICKED, 100,
+                        5, 5, 5, MouseButton.PRIMARY, 1000, false, true, true, true,
+                        true, true, true, true, true, true, null);
+                botonesTablero[fila][columna].fireEvent(event1);
+                botonesTablero[fila][columna].setText("P");
+                Robot robot = new Robot();
+                Thread.sleep(300);
+                robot.mouseMove((int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinX() + 5,
+                        (int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinY() + 5);
+                robot.mousePress(InputEvent.BUTTON1_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_MASK);
+
+            }
+        }
+
+    }
+}
+    
