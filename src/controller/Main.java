@@ -35,10 +35,7 @@ public class Main extends Application{
         stage.setTitle("Minesweeper");
         stage.setScene(scene);
         stage.show();
-        tablero tablero = new tablero(5, 5, 5);
-        tablero.imprimirTablero();
-        System.out.println("-----");
-        tablero.imprimirPistas();
+        
     }
     
 }

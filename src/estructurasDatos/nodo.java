@@ -4,13 +4,15 @@
  */
 package estructurasDatos;
 
+import modelo.casilla;
+
 /**
  *
  * @author Personal
  */
 public class nodo {
     
-     private Object info;
+     private casilla info;
     private nodo siguiente;
 
     public nodo() {
@@ -22,7 +24,7 @@ public class nodo {
         return info;
     }
 
-    public void setInfo(Object info){
+    public void setInfo(casilla info){
         this.info=info;
     }
     

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" fx:id="tableroPane" prefHeight="315.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.JuegoController" />
+<AnchorPane id="AnchorPane" fx:id="tableroPane" prefHeight="315.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.JuegoController">
+   <children>
+      <Label fx:id="labelTiempo" layoutX="109.0" layoutY="6.0" text="00:00:00" />
+      <Label layoutX="7.0" layoutY="6.0" text="Tiempo de juego:" />
+      <Label fx:id="labelMinasEncontradas" layoutX="7.0" layoutY="23.0" text="Minas encontradas:" />
+      <Label fx:id="labelMostrarMinas" layoutX="118.0" layoutY="23.0" prefHeight="17.0" prefWidth="19.0" text=" " />
+   </children>
+</AnchorPane>
