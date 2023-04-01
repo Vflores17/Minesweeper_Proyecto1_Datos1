@@ -25,6 +25,8 @@ import estructurasDatos.listaSimple;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -41,12 +43,19 @@ import modelo.cronometroJuego;
  */
 public class JuegoController implements Initializable {
     
-    boolean turnoCompu=false;
+    private menuInicialController menuController=new menuInicialController();
+    
+    boolean turnoCompuDummy=false;
+    boolean turnoCompuAdvanced=false;
 
     private Button btnSalirJuego;
     int numFilas=8;
     int numColumnas=8;
     int numMinas=15;
+    
+    int numConstante;
+    
+    int numMinasAlrededor;
     
     Button[][] botonesTablero;
     @FXML
@@ -64,6 +73,7 @@ public class JuegoController implements Initializable {
     private Label labelMinasEncontradas;
     @FXML
     private Label labelMostrarMinas;
+    private String nivel;
     
 
     /**
@@ -74,6 +84,7 @@ public class JuegoController implements Initializable {
         cargarControles();
         crearTableroBuscaminas();
         crono.iniciarCronometro();
+        
 
         
     }
@@ -118,9 +129,11 @@ public class JuegoController implements Initializable {
                 botonesTablero[t.getPosFila()][t.getPosColumna()].setText(t.getNumMinasAlrededor()==0?"":
                         t.getNumMinasAlrededor()+ "");
                 
+                
             }
         });
         tableroBuscaminas.imprimirTablero();
+        tableroBuscaminas.imprimirPistas();
     }
 
     void closeWindows() {
@@ -155,8 +168,8 @@ public class JuegoController implements Initializable {
                 botonesTablero[i][j]=new Button();
                 botonesTablero[i][j].setId(i + "," + j);
                 botonesTablero[i][j].setBorder(null);
-                MouseEvent dobleClic = new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, true, true, true, true, true, true, true, true, true, true, null);
-                botonesTablero[i][j].fireEvent(dobleClic);
+                //MouseEvent dobleClic = new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY, 2, true, true, true, true, true, true, true, true, true, true, null);
+                //botonesTablero[i][j].fireEvent(dobleClic);
                 if (i == 0 && j == 0) {
                     botonesTablero[i][j].setLayoutX(posXreferencia);
                     botonesTablero[i][j].setLayoutY(posYreferencia);
@@ -198,52 +211,113 @@ public class JuegoController implements Initializable {
             labelMostrarMinas.setText(MinasEncontradas + "");
             return; // Salir del método
         }
-
-        if (turnoCompu) {
+        
+        
+        
+        if (nivel.equals("Dummy Level")){
+        if (turnoCompuDummy) {
             tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
         } else {
             try {
-                dummyLevel(turnoCompu = true);
+                dummyLevel(turnoCompuDummy = true);
             } catch (InterruptedException ex) {
                 Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (AWTException ex) {
                 Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            turnoCompu = false;
-        }
+                turnoCompuDummy = false;
+            }
 
-        turnoCompu = !turnoCompu; // Cambiar el turno
+            turnoCompuDummy = !turnoCompuDummy; // Cambiar el turno
+        } else if (nivel.equals("Advanced Level")) {
+            if (turnoCompuAdvanced) {
+                tableroBuscaminas.seleccionarCasilla(posFila, posColumna);
+            } else {
+                try {
+                    advancedLevel(turnoCompuAdvanced = true);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AWTException ex) {
+                    Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                turnoCompuAdvanced = false;
+            }
+
+            turnoCompuAdvanced = !turnoCompuAdvanced; // Cambiar el turno
+        }
     }
+    
+    public void setNivel(String nivel){
+        this.nivel=nivel;
+    }
+
+
 
     public void setLabel(String labelString) {
         labelTiempo.setText(labelString);
     }
 
-    public void dummyLevel(boolean turnoCompu) throws InterruptedException, AWTException {
-        if (turnoCompu) {
+    public void dummyLevel(boolean turnoCompuDummy) throws InterruptedException, AWTException {
+        if (turnoCompuDummy) {
             int fila,columna;
             do {
                 fila = (int) (Math.random() * numFilas);
                 columna = (int) (Math.random() * numColumnas);
             } while (botonesTablero[fila][columna].isDisabled());
             
+                
             if (!botonesTablero[fila][columna].isDisabled()) {
                 //botonesTablero[fila][columna].fire();
                 MouseEvent event1 = new MouseEvent(MouseEvent.MOUSE_CLICKED, 100,
                         5, 5, 5, MouseButton.PRIMARY, 1000, false, true, true, true,
                         true, true, true, true, true, true, null);
                 botonesTablero[fila][columna].fireEvent(event1);
-                botonesTablero[fila][columna].setText("P");
+                botonesTablero[fila][columna].setText(":/");
+                Thread.sleep(500);
+                
                 Robot robot = new Robot();
-                Thread.sleep(300);
+                //robot.wait(2);
+                //botonesTablero[fila][columna].fire();
                 robot.mouseMove((int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinX() + 5,
                         (int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinY() + 5);
                 robot.mousePress(InputEvent.BUTTON1_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_MASK);
-
+                
             }
         }
 
     }
-}
     
+    public void advancedLevel(boolean turnoCompuAdvanced) throws AWTException, InterruptedException{
+        if (turnoCompuAdvanced) {
+            System.out.println("Esta entrando siiiuuu");
+            listaSimple listaGeneral = new listaSimple();
+            listaSimple listaSegura = new listaSimple();
+            listaSimple listaIncertidumbre = new listaSimple();
+            for (int i = 0; i < botonesTablero.length; i++) {
+                for (int j = 0; j < botonesTablero[i].length; j++) {
+                    if (!botonesTablero[i][j].isDisabled()) {
+                        casilla cas=tableroBuscaminas.getCasilla(i, j);
+                        listaGeneral.agregarFinal(cas);
+                    }
+                }
+            }
+            if(!listaGeneral.estaVacia()){
+                int posAleatoria=(int) (Math.random()*listaGeneral.getTamano());
+                casilla casAleatoria =(casilla) listaGeneral.getValorNodo(posAleatoria);
+                
+                if(casAleatoria.hayMina()){
+                listaGeneral.agregarFinal(casAleatoria);
+                }else{
+                    listaIncertidumbre.agregarFinal(casAleatoria);
+                }
+                
+                listaGeneral.eliminarNodo(casAleatoria);
+                
+                System.out.println("Lista General:"+ listaGeneral.toString());
+                System.out.println("Lista Segura:"+ listaSegura.toString());
+                System.out.println("Lista Incertidumbre:"+ listaIncertidumbre.toString());
+            }
+        }
+    }
+}
