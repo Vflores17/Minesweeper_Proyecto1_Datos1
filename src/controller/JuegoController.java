@@ -25,14 +25,14 @@ import estructurasDatos.listaSimple;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.util.HashSet;
-import java.util.Set;
-import javafx.animation.PauseTransition;
-import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
+import controller.ArduinoJava;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import modelo.cronometroJuego;
 
 
@@ -49,18 +49,18 @@ public class JuegoController implements Initializable {
     boolean turnoCompuAdvanced=false;
 
     private Button btnSalirJuego;
-    int numFilas=8;
-    int numColumnas=8;
-    int numMinas=15;
-    
+    int numFilas = 8;
+    int numColumnas = 8;
+    int numMinas = 15;
+
     int numConstante;
-    
+
     int numMinasAlrededor;
-    
+
     Button[][] botonesTablero;
     @FXML
     private AnchorPane tableroPane;
-    
+
     tablero tableroBuscaminas;
     @FXML
     private Label labelTiempo;
@@ -74,7 +74,12 @@ public class JuegoController implements Initializable {
     @FXML
     private Label labelMostrarMinas;
     private String nivel;
-    
+
+    private ArduinoJava control;
+
+    private boolean serialConectado;
+    @FXML
+    private Button btnArduino;
 
     /**
      * Initializes the controller class.
@@ -84,11 +89,53 @@ public class JuegoController implements Initializable {
         cargarControles();
         crearTableroBuscaminas();
         crono.iniciarCronometro();
-        
+        control = new ArduinoJava();
+        serialConectado = false;
+        btnArduino.setOnAction(event -> {
+            if (!serialConectado) {
+                control.conectar();
+                serialConectado = true;
+                btnArduino.setText("Desconectar");
 
-        
+            } else {
+                try {
+                    control.desconectar();
+                    serialConectado = false;
+                    btnArduino.setText("Conectar");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
+            if (serialConectado) {
+                try {
+                    /*Thread thread = new Thread(new Runnable() {
+                    public void run() {
+                    try {
+                    while (true) {*/
+                    control.procesarMensajes();
+                    /*}
+                    } catch (IOException | AWTException e) {
+                    e.printStackTrace();
+                    }
+                    }
+                    });
+                    thread.start();*/
+                } catch (IOException ex) {
+                    Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (AWTException ex) {
+                    Logger.getLogger(JuegoController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }, 0, 10, TimeUnit.MILLISECONDS); // adjust the delay and period to suit your needs
+
     }
-    
+
+
+
     
     private void crearTableroBuscaminas(){
         tableroBuscaminas = new tablero(numFilas, numColumnas, numMinas);
@@ -320,4 +367,11 @@ public class JuegoController implements Initializable {
             }
         }
     }
-}
+
+
+    
+        
+        
+    }
+
+

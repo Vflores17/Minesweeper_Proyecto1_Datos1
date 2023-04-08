@@ -75,15 +75,5 @@ public class menuInicialController implements Initializable {
         }
 
     }
-    /*public String getNivel() {
-        if (boxNivel == null) {
-            System.err.println("Error: boxNivel es null.");
-            return null;
-        }
-        String nivel = boxNivel.getValue();
-        return nivel;
-    }*/
- 
-    
     
 }

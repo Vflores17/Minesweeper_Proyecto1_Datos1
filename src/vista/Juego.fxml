@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
@@ -9,5 +10,6 @@
       <Label layoutX="7.0" layoutY="6.0" text="Tiempo de juego:" />
       <Label fx:id="labelMinasEncontradas" layoutX="7.0" layoutY="23.0" text="Minas encontradas:" />
       <Label fx:id="labelMostrarMinas" layoutX="118.0" layoutY="23.0" prefHeight="17.0" prefWidth="19.0" text=" " />
+      <Button fx:id="btnArduino" layoutX="258.0" layoutY="19.0" mnemonicParsing="false" text="Conectar" />
    </children>
 </AnchorPane>
