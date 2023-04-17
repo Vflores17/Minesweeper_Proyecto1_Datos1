@@ -68,12 +68,10 @@ public class casilla {
     void setAbierta(boolean abierta) {
         this.abierta = abierta;
     }
-    
-    
-        
-        
-            
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "[" + posFila + "," + posColumna + "]";
+    }
+
 }

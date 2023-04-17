@@ -14,6 +14,7 @@ import com.fazecast.jSerialComm.SerialPortIOException;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.util.Arrays;
 
 /**
@@ -62,6 +63,7 @@ public class ArduinoJava extends JuegoController {
 
     public void enviarDatos(String data) {
         try {
+            System.out.println(Arrays.toString(data.getBytes())+""+"se envia esta info");
             outputStream.write(data.getBytes());
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -88,6 +90,7 @@ public class ArduinoJava extends JuegoController {
 
     public void desconectar() throws IOException {
         inputStream.close();
+        outputStream.close();
         serialPort.closePort();
         System.out.println("se cerro el puerto: "+serialPort);
 
@@ -103,18 +106,22 @@ public class ArduinoJava extends JuegoController {
                 byte[] mensaje = Arrays.copyOf(buffer, bytesRead);
                 System.out.println(Arrays.toString(mensaje)+"/"+"se imprime mensaje");
                 if (mensaje.length == 27) {
-                    System.out.println("entra en mensaje[0]==27");
+                    System.out.println("tecla 27");
                     procesarMensaje(27);
                 } else if (mensaje.length == 24) {
+                    System.out.println("tecla 24");
                     procesarMensaje(24);
                 } else if (mensaje.length == 23) {
+                    System.out.println("tecla 23");
                     procesarMensaje(23);
                 } else if (mensaje.length == 25) {
+                    System.out.println("tecla 25");
                     procesarMensaje(25);
                 }
             }
         }
     }
+
     public void procesarMensaje(int mensaje) throws AWTException {
         switch (mensaje) {
             case 27:

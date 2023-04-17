@@ -40,7 +40,7 @@ public class menuInicialController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         boxNivel.getItems().addAll("Dummy Level","Advanced Level");
-        boxNivel.setValue("Dummy Level");
+        boxNivel.setValue("Advanced Level");
     }
 
     @FXML

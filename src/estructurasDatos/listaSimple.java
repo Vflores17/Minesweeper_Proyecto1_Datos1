@@ -16,7 +16,7 @@ public class listaSimple {
     private nodo head;
     private int tamaño;
 
-    public void listaSimple() {
+    public listaSimple() {
         this.head = null;
         this.tamaño = 0;
     }
@@ -63,12 +63,19 @@ public class listaSimple {
     }
     
     public Object getValorNodo(int posicion){
-    if (posicion==0){
+        if(head==null||posicion<0){
+            return null;
+        }
+        
+        if (posicion==0){
         return head.getInfo();
     }else{
         nodo aux=head;
         for(int i=0;i < posicion ; i++){
             aux=aux.getSiguiente();
+            if (aux==null){
+                return "no se encontro el valor";
+            }
         }
         return aux.getInfo();
         }
@@ -140,16 +147,22 @@ public class listaSimple {
     }
 
     public void eliminarNodo(casilla nodoBuscar) {
-        if (head.getInfo() == nodoBuscar) {
+        if (head.getCasilla()== nodoBuscar) {
             head = head.getSiguiente();
         } else {
             nodo aux = head;
-            while (aux.getSiguiente().getInfo() != nodoBuscar) {
+            while (aux.getSiguiente()!= null && aux.getSiguiente().getCasilla()!= nodoBuscar) {
                 aux = aux.getSiguiente();
             }
-            nodo siguiente = aux.getSiguiente().getSiguiente();
-            aux.setSiguiente(siguiente);
+            if(aux.getSiguiente()==null){
+                System.out.println("El nodo a eliminar no se encontro");
+            } else {
+                nodo siguiente = aux.getSiguiente().getSiguiente();
+                aux.setSiguiente(siguiente);
+                tamaño--;
+            }
         }
-        tamaño--;
     }
+   
 }
+        

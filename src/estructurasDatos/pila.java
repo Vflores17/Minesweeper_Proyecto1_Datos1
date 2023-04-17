@@ -47,4 +47,20 @@ public class pila {
     public int size() {
         return size;
     }
+    public void imprimir(){
+    if(!isEmpty()){
+            nodo aux=head;
+            int contador=0;
+            while(aux!=null){
+                System.out.print(contador+".["+aux.getInfo()+"]"+"->");
+                aux=aux.getSiguiente();
+                contador++;
+                }
+        }
+    
+    }
+    
+    public void eliminarPila(){
+        head=null;
+        }
 }

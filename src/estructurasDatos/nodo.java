@@ -35,5 +35,8 @@ public class nodo {
     public void setSiguiente(nodo nodo){
         this.siguiente=nodo;
     }
+    public casilla getCasilla(){
+        return info;
+    }
     
 }

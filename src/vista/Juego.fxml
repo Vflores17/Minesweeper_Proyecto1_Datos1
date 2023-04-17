@@ -4,12 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" fx:id="tableroPane" prefHeight="315.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.JuegoController">
+<AnchorPane id="AnchorPane" fx:id="tableroPane" prefHeight="340.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.JuegoController">
    <children>
       <Label fx:id="labelTiempo" layoutX="109.0" layoutY="6.0" text="00:00:00" />
       <Label layoutX="7.0" layoutY="6.0" text="Tiempo de juego:" />
       <Label fx:id="labelMinasEncontradas" layoutX="7.0" layoutY="23.0" text="Minas encontradas:" />
       <Label fx:id="labelMostrarMinas" layoutX="118.0" layoutY="23.0" prefHeight="17.0" prefWidth="19.0" text=" " />
       <Button fx:id="btnArduino" layoutX="258.0" layoutY="19.0" mnemonicParsing="false" text="Conectar" />
+      <Button fx:id="btnPistas" layoutX="20.0" layoutY="301.0" mnemonicParsing="false" onAction="#btnPistas" text="Pistas" />
+      <Label fx:id="labelPistas" layoutX="81.0" layoutY="305.0" prefHeight="17.0" prefWidth="231.0" text="Label" />
    </children>
 </AnchorPane>
