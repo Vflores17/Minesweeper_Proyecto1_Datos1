@@ -3,24 +3,35 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package modelo;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import controller.JuegoController;
+
 /**
+ * Clase para poder mostrar un cronometro en el juego
  *
- * @author Personal
+ * @author Vidal Flores Montero 2021579554
  */
 public class cronometroJuego {
-    
+
     private int segundos = 0;
     private Timeline timeline;
     JuegoController cronometro;
 
+    /**
+     * Contructor de la clase
+     *
+     * @param cronometro controlador
+     */
     public cronometroJuego(JuegoController cronometro) {
-        this.cronometro=cronometro;
+        this.cronometro = cronometro;
     }
 
+    /**
+     * Metodo para iniciar el cronometro el juego
+     */
     public void iniciarCronometro() {
         if (timeline != null) {
             timeline.stop();
@@ -37,12 +48,18 @@ public class cronometroJuego {
         timeline.play();
     }
 
+    /**
+     * Metodo para detener el cronometro del juego
+     */
     public void detenerCronometro() {
         if (timeline != null) {
             timeline.stop();
         }
     }
 
+    /**
+     * Metodo para actualizar el label de la GUI con el tiempo correspondiente
+     */
     private void actualizarLabel() {
         int horas = segundos / 3600;
         int minutos = (segundos % 3600) / 60;
@@ -51,6 +68,4 @@ public class cronometroJuego {
         cronometro.setLabel(tiempo);
     }
 
-    
 }
-    

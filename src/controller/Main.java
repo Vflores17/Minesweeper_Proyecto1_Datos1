@@ -13,12 +13,16 @@ import javafx.stage.Stage;
 import modelo.tablero;
 
 /**
+ * Metodo principal que corre el juego
  *
- * @author Vidal Flores Montero
+ * @author Vidal Flores Montero 2021579554
  */
-public class Main extends Application{
+public class Main extends Application {
 
-    /**se declara el contructor del metodo main para poder hacer ejecutable el proyecto
+    /**
+     * se declara el contructor del metodo main para poder hacer ejecutable el
+     * proyecto
+     *
      * @param args se envian los argumentos y comandos de linea
      */
     public static void main(String[] args) {
@@ -26,18 +30,20 @@ public class Main extends Application{
     }
 
     @Override
-    /** Método principal que genera el hilo necesario para poder ejecutar la GUI y todos sus elementos.
-     *@param stage se envia como parametro el escenario de la GUI
-     **/
+    /**
+     * Método principal que genera el hilo necesario para poder ejecutar la GUI
+     * y todos sus elementos.
+     *
+     * @param stage se envia como parametro el escenario de la GUI
+     *
+     */
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/vista/menuInicial.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("Minesweeper");
         stage.setScene(scene);
         stage.show();
-        
-        
-        
+
     }
-    
+
 }

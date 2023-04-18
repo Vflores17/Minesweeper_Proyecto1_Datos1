@@ -22,12 +22,13 @@ import javafx.stage.Stage;
 import modelo.cronometroJuego;
 
 /**
- * FXML Controller class
+ * FXML Controller class Metodo que genera el constructor del controlador de la
+ * ventana de menu inicial
  *
- * @author Personal
+ * @author Vidal Flores Montero 2021579554
  */
 public class menuInicialController implements Initializable {
-    
+
     @FXML
     private Button btnIniciar;
     @FXML
@@ -35,14 +36,28 @@ public class menuInicialController implements Initializable {
     private cronometroJuego crono;
 
     /**
-     * Initializes the controller class.
+     * Constructor del controlador de la clase
+     *
+     * @param url parametro con la ubicacion del FXML
+     * @param rb parametro que carga los recursos especificos del controlador
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        boxNivel.getItems().addAll("Dummy Level","Advanced Level");
+        boxNivel.getItems().addAll("Dummy Level", "Advanced Level");
         boxNivel.setValue("Advanced Level");
     }
 
+    /**
+     * Metodo que espera un ActionEvent para ejecutar la ventana de juego
+     * principal
+     *
+     * @param event parametro ActionEvent de cuando el usuario interactue con la
+     * GUI
+     * @throws InterruptedException maneja las posibles excepciones si el hilo
+     * es interrumpido
+     * @throws AWTException maneja las posibles excepciones de las clases o GUI
+     * utilizadas
+     */
     @FXML
     private void correrJuego(javafx.event.ActionEvent event) throws InterruptedException, AWTException {
         try {
@@ -51,16 +66,14 @@ public class menuInicialController implements Initializable {
             Parent root = loader.load();
 
             JuegoController controlador = loader.getController();
-            
-            
-            String nivel=boxNivel.getValue();
-            
+
+            String nivel = boxNivel.getValue();
+
             controlador.setNivel(nivel);
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();
-            
-            
+
             System.out.println(nivel);
             stage.setScene(scene);
             stage.show();
@@ -75,5 +88,5 @@ public class menuInicialController implements Initializable {
         }
 
     }
-    
+
 }

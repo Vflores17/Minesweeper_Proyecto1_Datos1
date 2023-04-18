@@ -38,9 +38,9 @@ import modelo.cronometroJuego;
 import estructurasDatos.pila;
 
 /**
- * FXML Controller class
+ * FXML Controller class Metodo constructor del controlador de la vista grafica
  *
- * @author Personal
+ * @author Vidal Flores Montero 2021579554
  */
 public class JuegoController implements Initializable {
 
@@ -95,11 +95,14 @@ public class JuegoController implements Initializable {
     private Label labelPistas;
 
     private int turnosUsuario = 0;
-    
-    private int pistasUsadas=0;
+
+    private int pistasUsadas = 0;
 
     /**
      * Initializes the controller class.
+     *
+     * @param url parametro con la ubicacion del FXML
+     * @param rb parametro que carga los recursos especificos del controlador
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -141,6 +144,10 @@ public class JuegoController implements Initializable {
 
     }
 
+    /**
+     * Metodo que crea el tablero del juego y se setea los eventos de partida
+     * perdida, partida ganada, y el abrir las casillas.
+     */
     private void crearTableroBuscaminas() {
         tableroBuscaminas = new tablero(numFilas, numColumnas, numMinas);
         tableroBuscaminas.setEventoPartidaPerdida(new Consumer<listaSimple>() {
@@ -188,6 +195,12 @@ public class JuegoController implements Initializable {
         tableroBuscaminas.imprimirPistas();
     }
 
+    /**
+     * Metodo que controla cuando se cierra la ventana del juego y se cargue la
+     * GUI de la ventana del menu inicial.
+     *
+     * @throws IOException controla posibles excepciones al cerrar la GUI
+     */
     void closeWindows() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/menuInicial.fxml"));
@@ -207,6 +220,9 @@ public class JuegoController implements Initializable {
         }
     }
 
+    /**
+     * Metodo que carga los controles del juego a cada botones creado
+     */
     private void cargarControles() {
         int posXreferencia = 70;
         int posYreferencia = 60;
@@ -263,6 +279,11 @@ public class JuegoController implements Initializable {
         }
     }
 
+    /**
+     * Metodo para controlar cuando el usuario realiza un click dentro del juego
+     *
+     * @param e parametro de entrada, de cuando el usuario realiza un click
+     */
     private void btnClick(javafx.scene.input.MouseEvent e) {
 
         Button btn = (Button) e.getSource();
@@ -308,14 +329,34 @@ public class JuegoController implements Initializable {
         }
     }
 
+    /**
+     * Metodo para setear el nivel de juego en el que se esta corriendo
+     *
+     * @param nivel String que indica la dificultad del juego
+     */
     public void setNivel(String nivel) {
         this.nivel = nivel;
     }
 
+    /**
+     * Metodo para poder cambiar el label de la GUI
+     *
+     * @param labelString String informacion por la cual se va setear el
+     * elemento grafico
+     */
     public void setLabel(String labelString) {
         labelTiempo.setText(labelString);
     }
 
+    /**
+     * Metodo que ejecuta la logica del Dummy Level
+     *
+     * @param turnoCompuDummy parametro booleano se ejecuta solo cuando es el
+     * turno de la compu
+     * @throws InterruptedException maneja si el hilo del juego es interrumpido
+     * @throws AWTException maneja las posibles excepciones al utilizar clases o
+     * GUI externas
+     */
     public void dummyLevel(boolean turnoCompuDummy) throws InterruptedException, AWTException {
         if (turnoCompuDummy) {
             int fila, columna;
@@ -342,81 +383,94 @@ public class JuegoController implements Initializable {
 
     }
 
+    /**
+     * Metodo que ejecuta la logica del Advanced Level
+     *
+     * @param turnoCompuAdvanced parametro booleano para cuando es el turno del
+     * computador
+     * @throws AWTException maneja las posibles excepciones al al recibir
+     * informacion de algun dispositivo conectado
+     * @throws InterruptedException maneja las posibles exceciones si se
+     * interrumpe el hilo del juego.
+     */
     public void advancedLevel(boolean turnoCompuAdvanced) throws AWTException, InterruptedException {
-    if (turnoCompuAdvanced) {
-        int tamañoInicial = 0;
-        listaSimple listaGeneral = new listaSimple();
-        for (int i = 0; i < botonesTablero.length; i++) {
-            for (int j = 0; j < botonesTablero[i].length; j++) {
-                if (!botonesTablero[i][j].isDisabled()) {
-                    casilla cas = tableroBuscaminas.getCasilla(i, j);
-                    listaGeneral.agregarFinal(cas);
+        if (turnoCompuAdvanced) {
+            int tamañoInicial = 0;
+            listaSimple listaGeneral = new listaSimple();
+            for (int i = 0; i < botonesTablero.length; i++) {
+                for (int j = 0; j < botonesTablero[i].length; j++) {
+                    if (!botonesTablero[i][j].isDisabled()) {
+                        casilla cas = tableroBuscaminas.getCasilla(i, j);
+                        listaGeneral.agregarFinal(cas);
+                    }
                 }
             }
-        }
-        System.out.println("Lista General /n");
-        listaGeneral.imprimir();
-        System.out.println("/n");
+            System.out.println("Lista General /n");
+            listaGeneral.imprimir();
+            System.out.println("/n");
 
-        while (!listaGeneral.estaVacia()) {
-            casilla cas = (casilla) listaGeneral.getValorNodo(0);
-            listaGeneral.eliminarPrimero();
+            while (!listaGeneral.estaVacia()) {
+                casilla cas = (casilla) listaGeneral.getValorNodo(0);
+                listaGeneral.eliminarPrimero();
 
-            if (!cas.hayMina()) {
-                listaSegura.agregarFinal(cas);
-            } else {
-                listaIncertidumbre.agregarFinal(cas);
+                if (!cas.hayMina()) {
+                    listaSegura.agregarFinal(cas);
+                } else {
+                    listaIncertidumbre.agregarFinal(cas);
+                }
             }
-        }
-        System.out.println("ListaGeneral: ");
-        listaGeneral.imprimir();
-        System.out.println("ListaSegura: ");
-        listaSegura.imprimir();
-        System.out.println("/n");
-        System.out.println("ListaIncertidumbre: ");
-        listaIncertidumbre.imprimir();
+            System.out.println("ListaGeneral: ");
+            listaGeneral.imprimir();
+            System.out.println("ListaSegura: ");
+            listaSegura.imprimir();
+            System.out.println("/n");
+            System.out.println("ListaIncertidumbre: ");
+            listaIncertidumbre.imprimir();
 
-        if (!listaSegura.estaVacia()) {
-            casilla seleccionar = (casilla) listaSegura.getValorNodo(0);
-            int fila = seleccionar.getPosFila();
-            int columna = seleccionar.getPosColumna();
+            if (!listaSegura.estaVacia()) {
+                casilla seleccionar = (casilla) listaSegura.getValorNodo(0);
+                int fila = seleccionar.getPosFila();
+                int columna = seleccionar.getPosColumna();
 
-            while (botonesTablero[fila][columna].isDisabled()) {
-                listaSegura.eliminarPrimero();
+                while (botonesTablero[fila][columna].isDisabled()) {
+                    listaSegura.eliminarPrimero();
 
-                if (listaSegura.estaVacia()) {
-                    return;
+                    if (listaSegura.estaVacia()) {
+                        return;
+                    }
+
+                    seleccionar = (casilla) listaSegura.getValorNodo(0);
+                    fila = seleccionar.getPosFila();
+                    columna = seleccionar.getPosColumna();
                 }
 
-                seleccionar = (casilla) listaSegura.getValorNodo(0);
-                fila = seleccionar.getPosFila();
-                columna = seleccionar.getPosColumna();
-            }
-
-            Robot robot = new Robot();
-            robot.mouseMove((int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinX() + 5,
-                    (int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinY() + 5);
-            robot.mousePress(InputEvent.BUTTON1_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_MASK);
-            listaSegura.eliminarPrimero();
-        } else {
-            casilla seleccionar = (casilla) listaIncertidumbre.getValorNodo(0);
-            int fila = seleccionar.getPosFila();
-            int columna = seleccionar.getPosColumna();
-            if (!botonesTablero[fila][columna].isDisabled()) {
-                System.out.println("seleccionad de lista incertidumbre");
                 Robot robot = new Robot();
                 robot.mouseMove((int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinX() + 5,
                         (int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinY() + 5);
                 robot.mousePress(InputEvent.BUTTON1_MASK);
                 robot.mouseRelease(InputEvent.BUTTON1_MASK);
-                listaIncertidumbre.eliminarPrimero();
+                listaSegura.eliminarPrimero();
+            } else {
+                casilla seleccionar = (casilla) listaIncertidumbre.getValorNodo(0);
+                int fila = seleccionar.getPosFila();
+                int columna = seleccionar.getPosColumna();
+                if (!botonesTablero[fila][columna].isDisabled()) {
+                    System.out.println("seleccionad de lista incertidumbre");
+                    Robot robot = new Robot();
+                    robot.mouseMove((int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinX() + 5,
+                            (int) botonesTablero[fila][columna].localToScreen(botonesTablero[fila][columna].getBoundsInLocal()).getMinY() + 5);
+                    robot.mousePress(InputEvent.BUTTON1_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_MASK);
+                    listaIncertidumbre.eliminarPrimero();
                 }
             }
         }
 
     }
 
+    /**
+     * Metodo para generar las pistas que se agregan a la pila de sugerencias
+     */
     public void buscarPistas() {
 
         int i = (int) (Math.random() * 7);
@@ -434,6 +488,12 @@ public class JuegoController implements Initializable {
 
     }
 
+    /**
+     * Metodo accionado por un ActionEvent de un boton para poder descubrir una
+     * sugerencia
+     *
+     * @param event parametro de la entrada de una accion como un click
+     */
     @FXML
     private void btnPistas(ActionEvent event) {
 
@@ -478,7 +538,11 @@ public class JuegoController implements Initializable {
             }
         }
     }
-    
+
+    /**
+     * Metodo para recorrer toda la matriz de botones para ver encontrar
+     * casillas disponibles y asi agregarla como sugerencia a la pila
+     */
     public void buscarPistasOrdenado() {
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
